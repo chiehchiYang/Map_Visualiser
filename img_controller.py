@@ -12,7 +12,7 @@ from six.moves import cPickle as pickle #for performance
 class img_controller(object):
     def __init__(self, img_path, ui, Town):
         self.Town = Town
-        with open("./maps/MapBoundaries.json", 'r') as f:
+        with open("./Maps/MapBoundaries.json", 'r') as f:
             data = ujson.load(f)
             Town = self.Town
             min_x= data[Town]["min_x"]
@@ -52,7 +52,7 @@ class img_controller(object):
         self.img_path = img_path
         self.read_file_and_init()
         self.Town = Town
-        with open("./maps/MapBoundaries.json", 'r') as f:
+        with open("./Maps/MapBoundaries.json", 'r') as f:
             data = ujson.load(f)
             Town = self.Town
             min_x= data[Town]["min_x"]
