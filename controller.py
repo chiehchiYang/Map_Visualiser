@@ -50,6 +50,10 @@ class MainWindow_controller(QMainWindow):
 
 
         self.ui.pushButton_show_results.clicked.connect(self.img_controller.show_results)
+        
+        self.ui.pushButton_show_point.clicked.connect(self.img_controller.show_point)
+        
+        
 
 
     def init_new_picture(self):

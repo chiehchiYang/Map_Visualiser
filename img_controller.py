@@ -286,4 +286,18 @@ class img_controller(object):
             
         
         
+    def show_point(self):
         
+        if self.ui.lineEdit_x.text() != "" and self.ui.lineEdit_y.text() != "":
+            x = float(self.ui.lineEdit_x.text())
+            y = float(self.ui.lineEdit_y.text())
+            pos = self.carla_to_pixel(np.array([x, y]))
+            
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 50, thickness = 5)
+            
+            # print(pos)
+            self.__update_img()
+            
+            
+            # img, point=(0, 0), color = (0, 0, 255), point_size = 1 
+            
