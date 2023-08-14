@@ -1,4 +1,4 @@
 # Map_Visualiser
 map Visualiser
 
-![Demo](images/demo.png)
+![Demo](images/Demo.png)
