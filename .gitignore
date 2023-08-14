@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/img_controller.cpython-39.pyc
+__pycache__/controller.cpython-39.pyc
+__pycache__/opencv_engine.cpython-39.pyc
+__pycache__/UI.cpython-39.pyc
+Region_tags/Town10HD.pkl
