@@ -14,14 +14,8 @@ for Town in Town_list:
     lane = np.argwhere(lane == 0)
     lane_line = np.argwhere(lane_line > 0)
     
-
-
-    
-    
     for x, y in lane:
         mask[x][y] = 0
-        
-        
     for x, y in lane_line:
         mask[x][y] = 0
         
@@ -30,8 +24,6 @@ for Town in Town_list:
             
         crosswalk = cv2.imread(f"./{Town}/crosswalk.png", cv2.IMREAD_GRAYSCALE)
         crosswalk = np.argwhere(crosswalk > 0)
-        
-                
         for x, y in crosswalk:
             mask[x][y] = 0
                 
