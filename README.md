@@ -12,6 +12,7 @@ conda activate label
 conda  install pyqt
 pip install opencv-python-headless
 pip install scipy
+pip install six
 ```
 ## Label Tags
 1. Click 4 point on the image 
