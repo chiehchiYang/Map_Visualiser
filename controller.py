@@ -52,6 +52,26 @@ class MainWindow_controller(QMainWindow):
         self.ui.pushButton_show_results.clicked.connect(self.img_controller.show_results)
         
         self.ui.pushButton_show_point.clicked.connect(self.img_controller.show_point)
+     
+     
+        self.ui.pushButton_goal.clicked.connect(self.edit_goal_mode)
+        
+        self.ui.pushButton_color_area.clicked.connect(self.img_controller.show_selected_color_area)
+        
+        
+        self.ui.pushButton_save_goals.clicked.connect(self.img_controller.save_goal)
+        
+        
+        self.ui.pushButton_show_goals.clicked.connect(self.img_controller.show_goals)
+        
+        
+    def edit_goal_mode(self, ):
+        self.img_controller.reverse_goals_flag()
+        if self.img_controller.edit_goals_mode:
+            self.ui.pushButton_goal.setStyleSheet("color: rgb(255, 255, 0)")
+        else:
+            self.ui.pushButton_goal.setStyleSheet("color: rgb(255, 255, 255)")
+        
         
         
 

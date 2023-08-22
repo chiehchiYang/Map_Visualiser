@@ -32,6 +32,14 @@ class img_controller(object):
         self.edit_mode_flag = False
         self.show_result_flag = False
         
+        self.edit_goals_mode = False
+        
+        
+        self.goals_list = []
+        self.current_color = ""
+        
+    def reverse_goals_flag(self):
+        self.edit_goals_mode = not self.edit_goals_mode
 
     def read_file_and_init(self):
         self.origin_img = opencv_engine.read_image(self.img_path)
@@ -108,6 +116,34 @@ class img_controller(object):
     def set_slider_value(self, value):
         self.ratio_value = value
         self.__update_img()
+        
+    def save_goal(self):
+        
+
+        if len(self.goals_list) != 0:
+            if os.path.exists(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl'):
+                
+                color_2_goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+                # color_2_goals[tag_name] = self.pixel_to_carla(contours)
+                
+                color_2_goals[self.current_color] = self.goals_list
+
+                
+                self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+
+            else:
+                color_2_goals = {}
+                
+                color_2_goals[self.current_color] = self.goals_list
+
+                self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+        
+            # empty goal list 
+            self.goals_list = []
+            self.current_color = ""
+            
+            self.clear()
+                
 
     # event 
     def set_clicked_position(self, event):
@@ -124,43 +160,125 @@ class img_controller(object):
         image_pos = np.array([int(cv_image_x), int(cv_image_y)])
         
         
-        if event.button() == 1: # right clicked
-
-            # point = [cv_image_x , cv_image_y ]
-            if self.point_counter != 4:
-                self.point_counter+=1
-                self.points.append(image_pos)
-                
-                self.draw_point((norm_x, norm_y))
-                if self.point_counter == 4:
-                    self.points = self.order_points(np.array( self.points) )
-                    # print(self.points)
-        elif event.button() == 2: # left clicked
+        
+        if self.edit_goals_mode:
             
-            if self.point_counter == 4:
+            
+            
+            selected_x = image_pos[0]
+            selected_y = image_pos[1]
+            
+            
+            if event.button() == 1: # right clicked
                 
-                coor_list = []
-                for point in self.points:
-                    # coor_list.append(self.carla_to_pixel( point ))
-                    coor_list.append(( point ))
+                if self.current_color !=  "":
+                    self.goals_list.append([selected_x, selected_y])
+                    
+                    print("add Goal: ", selected_x, selected_y)
+                    
+                    self.draw_point((norm_x, norm_y))
+                    
                 
-                contours = np.array(coor_list)
+                # select goal points                 
+            elif event.button() == 2: # left clicked
+                # color 
+                
+                print('B, G, R: ')
+                B, G, R = self.origin_img[selected_y][selected_x]
+                print(B, G, R)
+                
+                self.current_color = f"{B}_{G}_{R}"
                 
                 
-                # self.draw_poly(contours)
-                self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
+                
+            
+            
+        else:
+            if event.button() == 1: # right clicked
+                if self.point_counter != 4:
+                    self.point_counter+=1
+                    self.points.append(image_pos)
+                    
+                    self.draw_point((norm_x, norm_y))
+                    if self.point_counter == 4:
+                        self.points = self.order_points(np.array( self.points) )
+                        # print(self.points)
+            elif event.button() == 2: # left clicked
+                
+                if self.point_counter == 4:
+                    
+                    coor_list = []
+                    for point in self.points:
+                        # coor_list.append(self.carla_to_pixel( point ))
+                        coor_list.append(( point ))
+                    contours = np.array(coor_list)
+                    self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
                 
                 
+    
+    
+    def show_selected_color_area(self):
+        if self.current_color != "":
+            
+            color = self.current_color.split("_")
+            
+            B = int(color[0])
+            G = int(color[1])
+            R = int(color[2])
+            self.current_color = f"{B}_{G}_{R}"
+            idx = np.where(np.any(self.origin_img != [B, G, R], axis=-1)) # any instead of all
+            self.display_img[idx[0], idx[1], :] = [0, 0, 0]
+            self.__update_img()
+            
+            
+    def show_goals(self):
+        # clear
+        
+        
+        # show goals 
+        self.clear()
+        
+        if os.path.exists(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl'):
+            color2goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+           
+            colors = list(color2goals.keys())
+            # draw on image with tag 
+            for color in colors:
+                print(color)
+                # B G R
+                
+                goal_list = color2goals[color]
+                for goal in goal_list:
+ 
+                   
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (goal[0], goal[1]))
                 
                 
+            self.__update_img()
                 
                 
+                #contours = self.carla_to_pixel(tags[tag])
+                # self.display_img = opencv_engine.draw_fillpoly_with_tag(self.display_img, contours, tag, color = (125, 255, 0))
+            #self.__update_img()
+            
+            
+            # color_2_goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+            # # color_2_goals[tag_name] = self.pixel_to_carla(contours)
                 
-                # draw fillPoly
+            # color_2_goals[self.current_color] = self.goals_list
 
-                # cv2.fillPoly(self.current_top_img, pts = [contours], color =(255,0,0))
+            
+            # self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
+            
+        else:
+            print("NO tag")
+            
+            
                 
         
+                
+                
 
 
     # order points 
@@ -229,13 +347,6 @@ class img_controller(object):
             tags = self.load_dict(f'./Region_tags/{self.ui.town_comboBox.currentText()}.pkl')
            
             tag_list = list(tags.keys())
-            
-            
-            # ({self.origin_width}, {self.origin_height})"
-            
-            
-            
-            
             # draw on image with tag 
             for tag in tag_list:
                 contours = self.carla_to_pixel(tags[tag])
@@ -257,14 +368,9 @@ class img_controller(object):
                 
             # self.draw_poly(contours)
             # self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
-            
-            
-           
             tag_name = self.ui.lineEdit_tag.text()
             if tag_name == "":
                 return
-            
-            
             
             # check json file exist ?
             
