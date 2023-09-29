@@ -29,17 +29,16 @@ class img_controller(object):
         self.point_counter = 0
         self.points = []
         
+        self.list_collect_points = []
+        
         self.edit_mode_flag = False
         self.show_result_flag = False
         
-        self.edit_goals_mode = False
         
+        self.route_mode = False
         
-        self.goals_list = []
-        self.current_color = ""
+        self.previous_point = [-1,  -1]
         
-    def reverse_goals_flag(self):
-        self.edit_goals_mode = not self.edit_goals_mode
 
     def read_file_and_init(self):
         self.origin_img = opencv_engine.read_image(self.img_path)
@@ -55,6 +54,8 @@ class img_controller(object):
         self.__update_img()
         self.point_counter = 0
         self.points = []
+        
+        self.list_collect_points = []
         
     def set_path(self, img_path, Town):
         self.img_path = img_path
@@ -95,15 +96,29 @@ class img_controller(object):
         origin_text = f"Origin img shape = ({self.origin_width}, {self.origin_height})"
         self.ui.label_img_shape.setText(current_text+"\t"+origin_text)
 
-    def __update_text_clicked_position(self, x, y):
+    def __update_text_clicked_position(self, x, y, yaw):
         # give me qpixmap point
         self.ui.label_click_pos.setText(f"Clicked postion = ({x}, {y})")
         norm_x = x/self.qpixmap.width()
         norm_y = y/self.qpixmap.height()
         # print(f"(x, y) = ({x}, {y}), normalized (x, y) = ({norm_x}, {norm_y})")
         # self.ui.label_norm_pos.setText(f"Normalized postion = ({norm_x:.3f}, {norm_y:.3f})")
-        self.ui.label_real_pos.setText(f"Carla Coordinate = ({int(norm_x*self.origin_width)}, {int(norm_y*self.origin_height)})")
 
+        cv_image_x = norm_x*self.origin_width
+        cv_image_y = norm_y*self.origin_height
+        image_pos = np.array([int(cv_image_x), int(cv_image_y)])
+        carla_pos = self.pixel_to_carla(image_pos)
+
+        self.ui.label_real_pos.setText(f"Carla Coordinate = ({carla_pos[0]:5.1f}, {carla_pos[1]:5.1f})")
+        
+        if yaw == -1:
+            pass
+        else:
+            self.ui.label_yaw.setText(f"yaw= ({yaw:5.1f})")
+        # label_yaw
+
+# for numbers in list:
+#     print(f'{numbers:9.3f}')
 
     def set_zoom_in(self):
         self.ratio_value = min(100, self.ratio_value + 1)
@@ -116,40 +131,12 @@ class img_controller(object):
     def set_slider_value(self, value):
         self.ratio_value = value
         self.__update_img()
-        
-    def save_goal(self):
-        
-
-        if len(self.goals_list) != 0:
-            if os.path.exists(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl'):
-                
-                color_2_goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-                # color_2_goals[tag_name] = self.pixel_to_carla(contours)
-                
-                color_2_goals[self.current_color] = self.goals_list
-
-                
-                self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-
-            else:
-                color_2_goals = {}
-                
-                color_2_goals[self.current_color] = self.goals_list
-
-                self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-        
-            # empty goal list 
-            self.goals_list = []
-            self.current_color = ""
-            
-            self.clear()
-                
 
     # event 
     def set_clicked_position(self, event):
         x = event.pos().x()
         y = event.pos().y()
-        self.__update_text_clicked_position(x, y)
+        
         norm_x = x/self.qpixmap.width()
         norm_y = y/self.qpixmap.height()
         # self.draw_point((norm_x, norm_y))
@@ -160,127 +147,169 @@ class img_controller(object):
         image_pos = np.array([int(cv_image_x), int(cv_image_y)])
         
         
+        # get yaw     
+        yaw = -1
+        current_pos = self.pixel_to_carla(image_pos)     
+        if self.previous_point[0] != -1:
+            
+            
+            yaw_vector = (current_pos - self.previous_point)
+
+            vector = [1, 0]
+
+            unit_vector_1 = yaw_vector / np.linalg.norm(yaw_vector)
+            unit_vector_2 = vector / np.linalg.norm(vector)
+            
+            
+            dot_product = np.dot(unit_vector_1, unit_vector_2)
+            
+            angle = np.arccos(dot_product)
+            import math
+            
+            if yaw_vector[1] < 0:
+                yaw = -math.degrees(angle)
+            else:
+                yaw = math.degrees(angle)
+
+            
+            # change yaw yaw_vector to yaw
+        self.__update_text_clicked_position(x, y, yaw)
+            
         
-        if self.edit_goals_mode:
+        
+        self.previous_point = current_pos
+
+        
+        
+
+        if event.button() == 1: # left clicked
             
-            
-            
-            selected_x = image_pos[0]
-            selected_y = image_pos[1]
-            
-            
-            if event.button() == 1: # right clicked
-                
-                if self.current_color !=  "":
-                    self.goals_list.append([selected_x, selected_y])
-                    
-                    print("add Goal: ", selected_x, selected_y)
-                    
-                    self.draw_point((norm_x, norm_y))
-                    
-                
-                # select goal points                 
-            elif event.button() == 2: # left clicked
-                # color 
-                
-                print('B, G, R: ')
-                B, G, R = self.origin_img[selected_y][selected_x]
-                print(B, G, R)
-                
-                self.current_color = f"{B}_{G}_{R}"
-                
-                
-                
-            
-            
-        else:
-            if event.button() == 1: # right clicked
-                if self.point_counter != 4:
+            if not self.route_mode:
+                if self.point_counter < 4:
                     self.point_counter+=1
-                    self.points.append(image_pos)
-                    
-                    self.draw_point((norm_x, norm_y))
+                    self.points.append(image_pos)        
                     if self.point_counter == 4:
                         self.points = self.order_points(np.array( self.points) )
-                        # print(self.points)
-            elif event.button() == 2: # left clicked
+                    self.draw_point((norm_x, norm_y))
+                    
                 
+            else:
+                
+                carla_pos = self.pixel_to_carla(image_pos)
+                self.list_collect_points.append(carla_pos)
+                self.draw_point((norm_x, norm_y))
+                
+                                        
+                                        
+                        
+
+        elif event.button() == 2: # right clicked
+            if not self.route_mode:
                 if self.point_counter == 4:
                     
                     coor_list = []
                     for point in self.points:
                         # coor_list.append(self.carla_to_pixel( point ))
                         coor_list.append(( point ))
-                    contours = np.array(coor_list)
-                    self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
-                
-                
-    
-    
-    def show_selected_color_area(self):
-        if self.current_color != "":
-            
-            color = self.current_color.split("_")
-            
-            B = int(color[0])
-            G = int(color[1])
-            R = int(color[2])
-            self.current_color = f"{B}_{G}_{R}"
-            idx = np.where(np.any(self.origin_img != [B, G, R], axis=-1)) # any instead of all
-            self.display_img[idx[0], idx[1], :] = [0, 0, 0]
-            self.__update_img()
-            
-            
-    def show_goals(self):
-        # clear
-        
-        
-        # show goals 
-        self.clear()
-        
-        if os.path.exists(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl'):
-            color2goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-           
-            colors = list(color2goals.keys())
-            # draw on image with tag 
-            for color in colors:
-                print(color)
-                # B G R
-                
-                goal_list = color2goals[color]
-                for goal in goal_list:
- 
-                   
                     
-                    self.display_img = opencv_engine.draw_point(self.display_img, (goal[0], goal[1]))
+                    contours = np.array(coor_list)
+                    
+                    
+                    # self.draw_poly(contours)
+                    self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
+                    
+            else:
+                pass
+                    
                 
                 
-            self.__update_img()
                 
                 
-                #contours = self.carla_to_pixel(tags[tag])
-                # self.display_img = opencv_engine.draw_fillpoly_with_tag(self.display_img, contours, tag, color = (125, 255, 0))
-            #self.__update_img()
-            
-            
-            # color_2_goals = self.load_dict(f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-            # # color_2_goals[tag_name] = self.pixel_to_carla(contours)
                 
-            # color_2_goals[self.current_color] = self.goals_list
+                
+                # draw fillPoly
 
-            
-            # self.save_dict(color_2_goals, f'./Color2Goals/{self.ui.town_comboBox.currentText()}.pkl')
-            
-        else:
-            print("NO tag")
-            
-            
+                # cv2.fillPoly(self.current_top_img, pts = [contours], color =(255,0,0))
                 
+    def getEquidistantPoints(self, p1, p2, parts):
+        return zip(np.linspace(p1[0], p2[0], parts+1),
+                np.linspace(p1[1], p2[1], parts+1))
         
-                
-                
+        
+    ## smoothing    
+    def smooth_route(self):
+        
+        
+        if len(self.list_collect_points) > 0:
+            import math
+            import cv2 
 
+            total_distance = 0
+            route = []
+            prev_x = 0
+            prev_y = 0
+                    
 
+            for index in range(len(self.list_collect_points)):
+
+                x = self.list_collect_points[index][0]
+                y = self.list_collect_points[index][1]
+                # coordinate in pixel
+                coordinate = self.carla_to_pixel(np.array([x, y]))
+                
+                x = coordinate[0]
+                y = coordinate[1]
+
+                if index !=0:
+                    distance = math.sqrt( (x-prev_x)**2 + (y-prev_y)**2)
+                    total_distance+=distance
+                route.append( (x, y))
+                prev_x = x
+                prev_y = y
+
+            route = np.array(route)
+
+            poly = cv2.approxPolyDP(route, 0.004 * total_distance, False)
+            
+            new_route = []
+            for p in poly:
+                new_route.append(self.pixel_to_carla (p[0]) )
+
+            # getEquidistantPoints
+            final_route = []
+            prev_x = 0
+            prev_y = 0
+            for index in range(len(new_route)):
+                x = new_route[index][0]
+                y = new_route[index][1]
+
+                if index !=0:
+                    distance = math.sqrt( (x-prev_x)**2 + (y-prev_y)**2)
+                    final_route+= list(self.getEquidistantPoints((prev_x, prev_y), (x,y), int(distance)))
+                prev_x = x
+                prev_y = y
+
+            self.list_collect_points = final_route
+            
+            # draw on image 
+
+            self.display_img = self.origin_img.copy()
+            
+            color_counter = 0
+            for position in final_route:
+                color_counter+=3
+                
+                pos = self.carla_to_pixel(np.array(position))
+                
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+
+            self.__update_img()
+        
+        
+    def save_route_points(self):
+        if self.route_mode and len(self.list_collect_points) > 0:
+            np.save("./route.npy", np.array(self.list_collect_points))
+        
     # order points 
     def order_points(self, pts):
         
@@ -347,6 +376,13 @@ class img_controller(object):
             tags = self.load_dict(f'./Region_tags/{self.ui.town_comboBox.currentText()}.pkl')
            
             tag_list = list(tags.keys())
+            
+            
+            # ({self.origin_width}, {self.origin_height})"
+            
+            
+            
+            
             # draw on image with tag 
             for tag in tag_list:
                 contours = self.carla_to_pixel(tags[tag])
@@ -368,9 +404,14 @@ class img_controller(object):
                 
             # self.draw_poly(contours)
             # self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
+            
+            
+           
             tag_name = self.ui.lineEdit_tag.text()
             if tag_name == "":
                 return
+            
+            
             
             # check json file exist ?
             
