@@ -37,8 +37,125 @@ class img_controller(object):
         
         self.route_mode = False
         
+        self.obstacle_scenario_mode = False
+        
         self.previous_point = [-1,  -1]
         
+        self.obstacle_scenario_result = []
+        self.current_pos = None
+        self.yaw = None
+        
+        
+    def add_obstacle(self):
+        
+        if self.obstacle_scenario_mode == False:
+            return 0 
+        
+        # if self.current_pos != None:
+        #     return 0
+        
+        data = {}
+        data["obstacle_type"] = self.ui.obstacle_type_comboBox.currentText() # ex: trafficcone02
+        data["pos"] = self.current_pos
+
+        yaw = self.yaw
+        if yaw == None:
+            yaw = 0
+        data["yaw"] = yaw
+        
+        self.obstacle_scenario_result.append(data)
+        
+        
+        
+        # draw on the  display
+        
+        pos = self.carla_to_pixel(np.array(self.current_pos))     
+        
+        if self.ui.obstacle_type_comboBox.currentText() == "trafficcone01":
+            
+            size = 8
+        elif   self.ui.obstacle_type_comboBox.currentText() == "trafficcone02":
+            size = 4
+        elif   self.ui.obstacle_type_comboBox.currentText() == "streetbarrier":
+            size = 12 
+        elif   self.ui.obstacle_type_comboBox.currentText() == "trafficwarning":
+            size = 23 
+            
+            
+        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=size) 
+        
+
+        # trafficcone01        
+        # 0.8828125, 0.8821945190429688
+        # 8, 8
+
+        # trafficcone02
+        # 0.455596923828125, 0.3945465087890625
+        # 4, 4
+    
+        # streetbarrier
+        # 1.2149124145507812, 0.371673583984375
+        # 12, 3
+
+        # trafficwarning
+        # 2.3734283447265625 , 2.8705902099609375
+        # 23 , 28 
+
+    
+        
+        
+        self.__update_img()
+        
+    def save_obstacle_scenario(self):
+        
+        if self.obstacle_scenario_mode == False:
+            return 0 
+
+        self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+        if os.path.exists(self.file_path):
+            old_ = self.load_dict(self.file_path)
+            old_.append(self.obstacle_scenario_result)
+            self.save_dict(old_, self.file_path)
+        else:
+            self.save_dict([self.obstacle_scenario_result], self.file_path)
+        self.obstacle_scenario_result = []
+        
+        
+    def show_all_obstacle_scenario(self):
+        self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+        if os.path.exists(self.file_path):
+            result = self.load_dict(self.file_path)
+            
+            # clean the image 
+            self.clear()
+            
+            # draw on image
+            
+            
+            for obstacle_scenario in result:
+                for obstacle_info in obstacle_scenario: 
+                    
+                    obstacle_type = obstacle_info['obstacle_type']
+                    pos = obstacle_info['pos']
+                    yaw = obstacle_info['yaw']
+        
+                    pos = self.carla_to_pixel(np.array(pos))     
+                    
+                    if obstacle_type == "trafficcone01":
+                        size = 8
+                    elif  obstacle_type == "trafficcone02":
+                        size = 4
+                    elif obstacle_type == "streetbarrier":
+                        size = 12 
+                    elif obstacle_type == "trafficwarning":
+                        size = 23 
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=size) 
+                    
+
+            self.__update_img()
+    
+        
+    # def remove_obstacle(self)
 
     def read_file_and_init(self):
         self.origin_img = opencv_engine.read_image(self.img_path)
@@ -54,7 +171,7 @@ class img_controller(object):
         self.__update_img()
         self.point_counter = 0
         self.points = []
-        
+        self.obstacle_scenario_result = []
         self.list_collect_points = []
         
     def set_path(self, img_path, Town):
@@ -150,6 +267,7 @@ class img_controller(object):
         # get yaw     
         yaw = -1
         current_pos = self.pixel_to_carla(image_pos)     
+        
         if self.previous_point[0] != -1:
             
             
@@ -174,8 +292,10 @@ class img_controller(object):
             
             # change yaw yaw_vector to yaw
         self.__update_text_clicked_position(x, y, yaw)
-            
         
+        self.current_pos = current_pos
+        self.yaw = yaw
+            
         
         self.previous_point = current_pos
 
@@ -183,6 +303,9 @@ class img_controller(object):
         
 
         if event.button() == 1: # left clicked
+            
+            if self.obstacle_scenario_mode:
+                self.draw_point((norm_x, norm_y))
             
             if not self.route_mode:
                 if self.point_counter < 4:
@@ -204,6 +327,9 @@ class img_controller(object):
                         
 
         elif event.button() == 2: # right clicked
+            if self.obstacle_scenario_mode:
+                self.draw_point((norm_x, norm_y))
+                
             if not self.route_mode:
                 if self.point_counter == 4:
                     
@@ -238,7 +364,6 @@ class img_controller(object):
         
     ## smoothing    
     def smooth_route(self):
-        
         
         if len(self.list_collect_points) > 0:
             import math

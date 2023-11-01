@@ -24,12 +24,30 @@ class MainWindow_controller(QMainWindow):
 
     def setup_control(self):
         
+        
+        # - traffic cone
+        #     - static.prop.trafficcone01 
+        #     - static.prop.trafficcone02
+        # - street barrier 
+        #     - static.prop.streetbarrier
+        # - traffic warning
+        #     - static.prop.trafficwarning
+        # - illegal parking
+        
+        obstacle_type_list = ["trafficcone01", "trafficcone02", "streetbarrier", "trafficwarning"]
+
+        for obstacle_type in obstacle_type_list:
+            self.ui.obstacle_type_comboBox.addItem(obstacle_type)
+        
 
         Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD", ]
         
         for Town_name in Town_list:
             self.ui.town_comboBox.addItem(Town_name)
-    
+            
+            
+
+            
 
         self.file_path = f'./Maps/{self.ui.town_comboBox.currentText()}.png'
         self.img_controller = img_controller(img_path=self.file_path,
@@ -56,19 +74,39 @@ class MainWindow_controller(QMainWindow):
         
         self.ui.pushButton_route_mode.clicked.connect(self.change_to_route_mode)
         self.ui.pushButton_smooth_route.clicked.connect(self.img_controller.smooth_route)
-        # def smooth_route(self):
-        # 
-        
+
         self.ui.pushButton_save_route.clicked.connect(self.img_controller.save_route_points)
+        
+        self.ui.pushButton_create_scenario_mode.clicked.connect(self.change_to_create_obstacle_scenario_mode)
+        self.ui.pushButton_add_obstacle.clicked.connect(self.img_controller.add_obstacle)
+        self.ui.pushButton_save_obstacle_scenario.clicked.connect(self.img_controller.save_obstacle_scenario)
+        self.ui.pushButton_show_all_obstacle_scenario.clicked.connect(self.img_controller.show_all_obstacle_scenario)
+        
+        
+        
+         
+        
+        # save_obstacle_scenario
+        
 
     def change_to_route_mode(self):
         self.img_controller.route_mode = not self.img_controller.route_mode
-        
         if self.img_controller.route_mode:
             self.ui.pushButton_route_mode.setStyleSheet("color: red;")
         else:
             self.ui.pushButton_route_mode.setStyleSheet("color: white;")
+            
+    def change_to_create_obstacle_scenario_mode(self):
         
+        if self.img_controller.obstacle_scenario_mode == False:
+            
+            self.img_controller.obstacle_scenario_mode = not self.img_controller.obstacle_scenario_mode
+            if self.img_controller.obstacle_scenario_mode:
+                self.ui.pushButton_create_scenario_mode.setStyleSheet("color: red;")
+            else:
+                self.ui.pushButton_create_scenario_mode.setStyleSheet("color: white;")
+                
+
 
 
         
