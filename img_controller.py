@@ -5,6 +5,7 @@ from opencv_engine import opencv_engine
 import ujson
 import numpy as np
 import os 
+import math
 
 from six.moves import cPickle as pickle #for performance
 
@@ -46,6 +47,32 @@ class img_controller(object):
         self.yaw = None
         
         
+    def draw_rotated_bbox(self, pos, dx, dy, yaw):
+        # yaw is degree 
+        def rotate(origin, point, yaw):
+            """
+            Rotate a point counterclockwise by a given angle around a given origin.
+
+            The angle should be given in radians.
+            """
+            angle = math.radians(yaw)
+            ox, oy = origin
+            px, py = point
+
+            qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
+            qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
+            return int(qx), int(qy)
+            
+        x = pos[0]
+        y = pos[1]
+        
+        x1, y1 = rotate((x, y), (x - dx/2, y - dy/2), yaw)
+        x2, y2 = rotate((x, y), (x - dx/2, y + dy/2), yaw)
+        x3, y3 = rotate((x, y), (x + dx/2, y - dy/2), yaw)
+        x4, y4 = rotate((x, y), (x + dx/2, y + dy/2), yaw)
+        
+        return np.array([[x1, y1], [x3, y3],   [x4, y4], [x2, y2]]).astype(int)
+        
     def add_obstacle(self):
         
         if self.obstacle_scenario_mode == False:
@@ -67,43 +94,38 @@ class img_controller(object):
         
         
         
+        
+
+        
+        
         # draw on the  display
         
         pos = self.carla_to_pixel(np.array(self.current_pos))     
         
         if self.ui.obstacle_type_comboBox.currentText() == "trafficcone01":
-            
-            size = 8
+        
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=7) 
+        
         elif   self.ui.obstacle_type_comboBox.currentText() == "trafficcone02":
-            size = 4
+        
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=4) 
+        
         elif   self.ui.obstacle_type_comboBox.currentText() == "streetbarrier":
-            size = 12 
+            
+            contours = self.draw_rotated_bbox(pos, dx=12, dy=6, yaw=yaw)
+            self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+        
         elif   self.ui.obstacle_type_comboBox.currentText() == "trafficwarning":
-            size = 23 
+            
+            contours = self.draw_rotated_bbox(pos, dx=25, dy=15, yaw=yaw)
+            self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
             
             
-        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=size) 
-        
+        elif   self.ui.obstacle_type_comboBox.currentText() == "illegal_parking":
+            
+            contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+            self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
 
-        # trafficcone01        
-        # 0.8828125, 0.8821945190429688
-        # 8, 8
-
-        # trafficcone02
-        # 0.455596923828125, 0.3945465087890625
-        # 4, 4
-    
-        # streetbarrier
-        # 1.2149124145507812, 0.371673583984375
-        # 12, 3
-
-        # trafficwarning
-        # 2.3734283447265625 , 2.8705902099609375
-        # 23 , 28 
-
-    
-        
-        
         self.__update_img()
         
     def save_obstacle_scenario(self):
@@ -133,6 +155,10 @@ class img_controller(object):
             
             
             for obstacle_scenario in result:
+                
+                
+                random_color = tuple(np.random.random(size=3) * 256)
+                
                 for obstacle_info in obstacle_scenario: 
                     
                     obstacle_type = obstacle_info['obstacle_type']
@@ -142,14 +168,31 @@ class img_controller(object):
                     pos = self.carla_to_pixel(np.array(pos))     
                     
                     if obstacle_type == "trafficcone01":
-                        size = 8
-                    elif  obstacle_type == "trafficcone02":
-                        size = 4
+                    
+                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=7) 
+                    
+                    elif obstacle_type == "trafficcone02":
+                    
+                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=4) 
+                    
                     elif obstacle_type == "streetbarrier":
-                        size = 12 
+                        
+                        contours = self.draw_rotated_bbox(pos, dx=12, dy=6, yaw=yaw)
+                        self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                    
                     elif obstacle_type == "trafficwarning":
-                        size = 23 
-                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=size) 
+                        
+                        contours = self.draw_rotated_bbox(pos, dx=25, dy=15, yaw=yaw)
+                        self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                        
+                        
+                    elif obstacle_type == "illegal_parking":
+                        
+                        contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                        self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                    
+
+        
                     
 
             self.__update_img()

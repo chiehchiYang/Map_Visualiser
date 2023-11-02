@@ -34,7 +34,7 @@ class MainWindow_controller(QMainWindow):
         #     - static.prop.trafficwarning
         # - illegal parking
         
-        obstacle_type_list = ["trafficcone01", "trafficcone02", "streetbarrier", "trafficwarning"]
+        obstacle_type_list = ["trafficcone01", "trafficcone02", "streetbarrier", "trafficwarning", "illegal_parking"]
 
         for obstacle_type in obstacle_type_list:
             self.ui.obstacle_type_comboBox.addItem(obstacle_type)
@@ -44,9 +44,6 @@ class MainWindow_controller(QMainWindow):
         
         for Town_name in Town_list:
             self.ui.town_comboBox.addItem(Town_name)
-            
-            
-
             
 
         self.file_path = f'./Maps/{self.ui.town_comboBox.currentText()}.png'
