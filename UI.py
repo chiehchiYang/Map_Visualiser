@@ -33,6 +33,12 @@ class Ui_MainWindow(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         
+        self.label_img = QtWidgets.QLabel()
+        self.label_img.setGeometry(QtCore.QRect(0, 0, 1087, 797))
+        self.label_img.setObjectName("label_img")
+        self.scrollArea.setWidget(self.label_img)
+        self.verticalLayout.addWidget(self.scrollArea) 
+
         # self.scrollAreaWidgetContents = QtWidgets.QWidget()
         # self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 1087, 797))
         # self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
@@ -42,13 +48,6 @@ class Ui_MainWindow(object):
         # self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         # self.verticalLayout.addWidget(self.scrollArea)
         
-        
-        
-        self.label_img = QtWidgets.QLabel()
-        self.label_img.setGeometry(QtCore.QRect(0, 0, 1087, 797))
-        self.label_img.setObjectName("label_img")
-        self.scrollArea.setWidget(self.label_img)
-        self.verticalLayout.addWidget(self.scrollArea) 
         
         
         self.verticalLayoutWidget_2 = QtWidgets.QWidget(self.centralwidget)
@@ -198,6 +197,9 @@ class Ui_MainWindow(object):
         self.pushButton_remove_obstacle_scenario = QtWidgets.QPushButton(self.gridLayoutWidget_3)
         self.pushButton_remove_obstacle_scenario.setObjectName("pushButton_remove_obstacle_scenario")
         self.gridLayout_3.addWidget(self.pushButton_remove_obstacle_scenario, 7, 0, 1, 1)
+        self.pushButton_add_detect_point = QtWidgets.QPushButton(self.gridLayoutWidget_3)
+        self.pushButton_add_detect_point.setObjectName("pushButton_add_detect_point")
+        self.gridLayout_3.addWidget(self.pushButton_add_detect_point, 4, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1777, 22))
@@ -235,8 +237,9 @@ class Ui_MainWindow(object):
         self.pushButton_smooth_route.setText(_translate("MainWindow", "Smooth Route"))
         self.pushButton_save_route.setText(_translate("MainWindow", "Save Route"))
         self.pushButton_modify_point.setText(_translate("MainWindow", "Modify Point"))
-        self.pushButton_save_obstacle_scenario.setText(_translate("MainWindow", "SAVE Obstacle Scenario"))
-        self.pushButton_add_obstacle.setText(_translate("MainWindow", "Add obstacle"))
+        self.pushButton_save_obstacle_scenario.setText(_translate("MainWindow", "3. Save obstacle Scenario"))
+        self.pushButton_add_obstacle.setText(_translate("MainWindow", "1. Add obstacle                   "))
         self.pushButton_show_all_obstacle_scenario.setText(_translate("MainWindow", "Show All Scenario"))
         self.pushButton_create_scenario_mode.setText(_translate("MainWindow", "Create Scenario Mode"))
         self.pushButton_remove_obstacle_scenario.setText(_translate("MainWindow", "Remove this scenario"))
+        self.pushButton_add_detect_point.setText(_translate("MainWindow", "2. Add detect Point           "))

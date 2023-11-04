@@ -34,13 +34,13 @@ class MainWindow_controller(QMainWindow):
         #     - static.prop.trafficwarning
         # - illegal parking
         
-        obstacle_type_list = ["trafficcone01", "trafficcone02", "streetbarrier", "trafficwarning", "illegal_parking"]
+        obstacle_type_list = ["trafficcone01", "constructioncone", "streetbarrier", "trafficwarning", "illegal_parking"]
 
         for obstacle_type in obstacle_type_list:
             self.ui.obstacle_type_comboBox.addItem(obstacle_type)
         
 
-        Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD", ]
+        Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD" ]
         
         for Town_name in Town_list:
             self.ui.town_comboBox.addItem(Town_name)
@@ -76,6 +76,7 @@ class MainWindow_controller(QMainWindow):
         
         self.ui.pushButton_create_scenario_mode.clicked.connect(self.change_to_create_obstacle_scenario_mode)
         self.ui.pushButton_add_obstacle.clicked.connect(self.img_controller.add_obstacle)
+        self.ui.pushButton_add_detect_point.clicked.connect(self.img_controller.add_detect_point)
         self.ui.pushButton_save_obstacle_scenario.clicked.connect(self.img_controller.save_obstacle_scenario)
         self.ui.pushButton_show_all_obstacle_scenario.clicked.connect(self.img_controller.show_all_obstacle_scenario)
         

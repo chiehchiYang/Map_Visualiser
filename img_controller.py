@@ -43,6 +43,7 @@ class img_controller(object):
         self.previous_point = [-1,  -1]
         
         self.obstacle_scenario_result = []
+        self.detect_point = [-1, -1]#None
         self.current_pos = None
         self.yaw = None
         
@@ -72,6 +73,13 @@ class img_controller(object):
         x4, y4 = rotate((x, y), (x + dx/2, y + dy/2), yaw)
         
         return np.array([[x1, y1], [x3, y3],   [x4, y4], [x2, y2]]).astype(int)
+    
+    
+    def add_detect_point(self):
+        self.detect_point = self.current_pos
+        pos = self.carla_to_pixel(np.array(self.detect_point))     
+        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color =  (125, 125, 0), point_size=2) 
+        self.__update_img()
         
     def add_obstacle(self):
         
@@ -91,12 +99,6 @@ class img_controller(object):
         data["yaw"] = yaw
         
         self.obstacle_scenario_result.append(data)
-        
-        
-        
-        
-
-        
         
         # draw on the  display
         
@@ -130,23 +132,25 @@ class img_controller(object):
         
     def save_obstacle_scenario(self):
         
-        if self.obstacle_scenario_mode == False:
+        if self.obstacle_scenario_mode == False and self.detect_point[0] == -1 :
             return 0 
 
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
             old_ = self.load_dict(self.file_path)
-            old_.append(self.obstacle_scenario_result)
+            old_.append([self.detect_point, self.obstacle_scenario_result])
             self.save_dict(old_, self.file_path)
         else:
-            self.save_dict([self.obstacle_scenario_result], self.file_path)
+            self.save_dict([[self.detect_point, self.obstacle_scenario_result]], self.file_path)
         self.obstacle_scenario_result = []
+        self.detect_point = [-1, -1]
         
         
     def show_all_obstacle_scenario(self):
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
             result = self.load_dict(self.file_path)
+            
             
             # clean the image 
             self.clear()
@@ -156,9 +160,14 @@ class img_controller(object):
             
             for obstacle_scenario in result:
                 
-                
+                detect_point = obstacle_scenario[0]
+                obstacle_scenario = obstacle_scenario[1]
                 random_color = tuple(np.random.random(size=3) * 256)
                 
+                # draw detect point 
+                pos = self.carla_to_pixel(np.array(detect_point))     
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color =  (125, 125, 0), point_size=2) 
+                        
                 for obstacle_info in obstacle_scenario: 
                     
                     obstacle_type = obstacle_info['obstacle_type']

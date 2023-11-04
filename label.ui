@@ -366,7 +366,7 @@
      <item row="5" column="0">
       <widget class="QPushButton" name="pushButton_save_obstacle_scenario">
        <property name="text">
-        <string>SAVE Obstacle Scenario</string>
+        <string>3. Save obstacle Scenario</string>
        </property>
       </widget>
      </item>
@@ -376,7 +376,7 @@
      <item row="3" column="0">
       <widget class="QPushButton" name="pushButton_add_obstacle">
        <property name="text">
-        <string>Add obstacle</string>
+        <string>1. Add obstacle                   </string>
        </property>
       </widget>
      </item>
@@ -401,6 +401,13 @@
       <widget class="QPushButton" name="pushButton_remove_obstacle_scenario">
        <property name="text">
         <string>Remove this scenario</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QPushButton" name="pushButton_add_detect_point">
+       <property name="text">
+        <string>2. Add detect Point           </string>
        </property>
       </widget>
      </item>
