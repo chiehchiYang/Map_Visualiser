@@ -90,7 +90,7 @@ class img_controller(object):
         #     return 0
         
         data = {}
-        data["obstacle_type"] = self.ui.obstacle_type_comboBox.currentText() # ex: trafficcone02
+        data["obstacle_type"] = self.ui.obstacle_type_comboBox.currentText() # ex: constructioncone
         data["pos"] = self.current_pos
 
         yaw = self.yaw
@@ -108,7 +108,7 @@ class img_controller(object):
         
             self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=7) 
         
-        elif   self.ui.obstacle_type_comboBox.currentText() == "trafficcone02":
+        elif   self.ui.obstacle_type_comboBox.currentText() == "constructioncone":
         
             self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=4) 
         
@@ -180,7 +180,7 @@ class img_controller(object):
                     
                         self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=7) 
                     
-                    elif obstacle_type == "trafficcone02":
+                    elif obstacle_type == "constructioncone":
                     
                         self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=4) 
                     
