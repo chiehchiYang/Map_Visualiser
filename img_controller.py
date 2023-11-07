@@ -166,7 +166,7 @@ class img_controller(object):
                 
                 # draw detect point 
                 pos = self.carla_to_pixel(np.array(detect_point))     
-                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color =  (125, 125, 0), point_size=2) 
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color =  random_color, point_size=2) 
                         
                 for obstacle_info in obstacle_scenario: 
                     
