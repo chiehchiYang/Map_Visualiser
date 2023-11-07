@@ -7,17 +7,16 @@ def load_dict( filename_):
     return ret_di
 
 result = load_dict("Town10HD.pkl")
-scenario_obstacles = result[0]
 
-for obstacle_info in scenario_obstacles:
+for obstacle_info in result:
     
+    detect_point = obstacle_info[0]
+    obstacle_info = obstacle_info[1][0]
     obstacle_type = obstacle_info['obstacle_type']
     pos = obstacle_info['pos']
     yaw = obstacle_info['yaw']
     
     
-    print(obstacle_type, pos, yaw)
-    
-    
-    
+    print(detect_point, obstacle_type, pos , yaw)
+    break
     
