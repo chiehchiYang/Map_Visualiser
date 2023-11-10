@@ -47,6 +47,9 @@ class img_controller(object):
         self.current_pos = None
         self.yaw = None
         
+        self.selected_index = -1
+
+        
         
     def draw_rotated_bbox(self, pos, dx, dy, yaw):
         # yaw is degree 
@@ -130,38 +133,135 @@ class img_controller(object):
 
         self.__update_img()
         
+    
+    
+    def remove_scenario(self):
+
+        self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+        if os.path.exists(self.file_path):
+            old_ = self.load_dict(self.file_path)
+            
+            old_.pop(self.selected_index)
+            
+            
+            
+            
+            
+            self.save_dict(old_, self.file_path)
+            
+            self.clear()
+            self.show_all_obstacle_scenario()
+            
+    
+    def select_scenario(self):
+        self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+        if os.path.exists(self.file_path):
+            result = self.load_dict(self.file_path)
+            # clean the image 
+            self.clear()
+            self.show_all_obstacle_scenario()
+            
+            reference_point = self.current_pos
+            
+            desired_index = -1
+            # draw on image
+            min_distance = 10000
+            
+            # for obstacle_scenario in result:
+                
+            for index in range(len(result)):
+                
+                obstacle_scenario = result[index]
+            
+                detect_point = obstacle_scenario[0]
+                
+                
+                distance = math.sqrt( (detect_point[0] - reference_point[0])**2 + (detect_point[1] - reference_point[1])**2 )
+                # print(distance)
+                
+                if distance < min_distance:
+                    min_distance = distance
+                    desired_index = index
+                    
+            self.selected_index = desired_index
+            
+            
+
+            
+            
+            if self.selected_index != -1:
+                #print("=== ")
+
+                # print(result[-1])
+                
+                detect_point = result[self.selected_index][0]
+                
+                pos = self.carla_to_pixel(np.array(detect_point))
+                
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 , 0), point_size= 10) 
+
+                self.__update_img()
+                    
+                
+                
+                
+            
+            
+    
+    def clear_route(self):
+        self.list_collect_points = []
+        
     def save_obstacle_scenario(self):
         
-        if self.obstacle_scenario_mode == False and self.detect_point[0] == -1 :
+        if self.obstacle_scenario_mode == False or self.detect_point[0] == -1 or len(self.list_collect_points) == 0:
             return 0 
 
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
             old_ = self.load_dict(self.file_path)
-            old_.append([self.detect_point, self.obstacle_scenario_result])
+            old_.append([self.detect_point, self.obstacle_scenario_result, self.list_collect_points])
+            
             self.save_dict(old_, self.file_path)
         else:
-            self.save_dict([[self.detect_point, self.obstacle_scenario_result]], self.file_path)
+            self.save_dict([[self.detect_point, self.obstacle_scenario_result, self.list_collect_points]], self.file_path)
+            
         self.obstacle_scenario_result = []
         self.detect_point = [-1, -1]
+        
+        
+        self.obstacle_region_points = []
         
         
     def show_all_obstacle_scenario(self):
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
             result = self.load_dict(self.file_path)
-            
-            
             # clean the image 
             self.clear()
             
             # draw on image
-            
-            
             for obstacle_scenario in result:
                 
                 detect_point = obstacle_scenario[0]
+                route_points = obstacle_scenario[2]
+                
+                color_counter = 0
+                for position in route_points:
+                    color_counter+=3
+                    
+                    pos = self.carla_to_pixel(np.array(position))
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+
+                self.__update_img()
+                
+                
+                
                 obstacle_scenario = obstacle_scenario[1]
+                
+                
+               
+                
                 random_color = tuple(np.random.random(size=3) * 256)
                 
                 # draw detect point 
@@ -225,6 +325,9 @@ class img_controller(object):
         self.points = []
         self.obstacle_scenario_result = []
         self.list_collect_points = []
+        
+        
+        
         
     def set_path(self, img_path, Town):
         self.img_path = img_path
@@ -347,13 +450,9 @@ class img_controller(object):
         
         self.current_pos = current_pos
         self.yaw = yaw
-            
-        
         self.previous_point = current_pos
 
-        
-        
-
+    
         if event.button() == 1: # left clicked
             
             if self.obstacle_scenario_mode:
@@ -366,52 +465,35 @@ class img_controller(object):
                     if self.point_counter == 4:
                         self.points = self.order_points(np.array( self.points) )
                     self.draw_point((norm_x, norm_y))
-                    
-                
             else:
-                
+                # route mode
                 carla_pos = self.pixel_to_carla(image_pos)
                 self.list_collect_points.append(carla_pos)
                 self.draw_point((norm_x, norm_y))
                 
-                                        
-                                        
-                        
-
+                
+                
+                # self.obstacle_region_points.append(image_pos)
+                
         elif event.button() == 2: # right clicked
-            if self.obstacle_scenario_mode:
-                self.draw_point((norm_x, norm_y))
-                
-            if not self.route_mode:
-                if self.point_counter == 4:
-                    
-                    coor_list = []
-                    for point in self.points:
-                        # coor_list.append(self.carla_to_pixel( point ))
-                        coor_list.append(( point ))
-                    
-                    contours = np.array(coor_list)
-                    
-                    
-                    # self.draw_poly(contours)
-                    self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
-                    
-            else:
-                pass
-                    
-                
-                
-                
-                
-                
-                
-                # draw fillPoly
 
-                # cv2.fillPoly(self.current_top_img, pts = [contours], color =(255,0,0))
+            if self.obstacle_scenario_mode:
+                # save route 
+                self.draw_point((norm_x, norm_y))
+                carla_pos = self.pixel_to_carla(image_pos)
+                self.list_collect_points.append(carla_pos)
+            else:
+                if not self.route_mode:
+                    if self.point_counter == 4:
+                        coor_list = []
+                        for point in self.points:
+                            coor_list.append(( point ))
+                        contours = np.array(coor_list)
+                        self.draw_poly(self.carla_to_pixel(self.pixel_to_carla(contours)))
+        
                 
     def getEquidistantPoints(self, p1, p2, parts):
-        return zip(np.linspace(p1[0], p2[0], parts+1),
-                np.linspace(p1[1], p2[1], parts+1))
+        return zip(np.linspace(p1[0], p2[0], parts+1), np.linspace(p1[1], p2[1], parts+1))
         
         
     ## smoothing    
