@@ -48,6 +48,9 @@ class img_controller(object):
         self.yaw = None
         
         self.selected_index = -1
+        
+        
+        self.route_list = []
 
         
         
@@ -206,30 +209,39 @@ class img_controller(object):
                 
                 
             
-            
+    def add_route(self):
     
+        if len(self.list_collect_points) != 0 :            
+            self.route_list.append(self.list_collect_points)
+            self.list_collect_points = []
+            print("Add route !! ")
+            print("Total Route: ", len(self.route_list))
+            print(" -- ")
+
+        
     def clear_route(self):
         self.list_collect_points = []
         
     def save_obstacle_scenario(self):
         
-        if self.obstacle_scenario_mode == False or self.detect_point[0] == -1 or len(self.list_collect_points) == 0:
+        if self.obstacle_scenario_mode == False or self.detect_point[0] == -1 or len(self.route_list) == 0:
             return 0 
 
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
             old_ = self.load_dict(self.file_path)
-            old_.append([self.detect_point, self.obstacle_scenario_result, self.list_collect_points])
+            old_.append([self.detect_point, self.obstacle_scenario_result, self.route_list])
             
             self.save_dict(old_, self.file_path)
         else:
-            self.save_dict([[self.detect_point, self.obstacle_scenario_result, self.list_collect_points]], self.file_path)
+            self.save_dict([[self.detect_point, self.obstacle_scenario_result, self.route_list]], self.file_path)
             
         self.obstacle_scenario_result = []
         self.detect_point = [-1, -1]
         
         
         self.obstacle_region_points = []
+        self.route_list = []
         
         
     def show_all_obstacle_scenario(self):
@@ -243,15 +255,16 @@ class img_controller(object):
             for obstacle_scenario in result:
                 
                 detect_point = obstacle_scenario[0]
-                route_points = obstacle_scenario[2]
+                route_list = obstacle_scenario[2]
                 
-                color_counter = 0
-                for position in route_points:
-                    color_counter+=3
-                    
-                    pos = self.carla_to_pixel(np.array(position))
-                    
-                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+                for route_points in route_list:
+                    color_counter = 0
+                    for position in route_points:
+                        color_counter+=3
+                        
+                        pos = self.carla_to_pixel(np.array(position))
+                        
+                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
 
                 self.__update_img()
                 

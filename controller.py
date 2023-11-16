@@ -79,13 +79,13 @@ class MainWindow_controller(QMainWindow):
         self.ui.pushButton_add_detect_point.clicked.connect(self.img_controller.add_detect_point)
         self.ui.pushButton_save_obstacle_scenario.clicked.connect(self.img_controller.save_obstacle_scenario)
         self.ui.pushButton_show_all_obstacle_scenario.clicked.connect(self.img_controller.show_all_obstacle_scenario)
-        
         self.ui.pushButton_clear_route.clicked.connect(self.img_controller.clear_route)
         
-        
-        
+    
         self.ui.pushButton_select_scenario.clicked.connect(self.img_controller.select_scenario)
         self.ui.pushButton_remove_obstacle_scenario.clicked.connect(self.img_controller.remove_scenario)
+        self.ui.pushButton_add_route.clicked.connect(self.img_controller.add_route)
+        # add_route
         
         
         
