@@ -136,7 +136,37 @@ class img_controller(object):
 
         self.__update_img()
         
+        
+    def draw_current_obstacle(self):
+
+        for data in self.obstacle_scenario_result:
+                    
+            pos = self.carla_to_pixel(np.array(data["pos"])) 
+            yaw = data["yaw"]
+            
+            if self.ui.obstacle_type_comboBox.currentText() == "trafficcone01":
+            
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=7) 
+            
+            elif   self.ui.obstacle_type_comboBox.currentText() == "constructioncone":
+            
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=4) 
+            
+            elif   self.ui.obstacle_type_comboBox.currentText() == "streetbarrier":
+                
+                contours = self.draw_rotated_bbox(pos, dx=12, dy=6, yaw=yaw)
+                self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+            
+            elif   self.ui.obstacle_type_comboBox.currentText() == "trafficwarning":
+                
+                contours = self.draw_rotated_bbox(pos, dx=25, dy=15, yaw=yaw)
+                self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
     
+            elif   self.ui.obstacle_type_comboBox.currentText() == "illegal_parking":
+                
+                contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+        
     
     def remove_scenario(self):
 
@@ -145,10 +175,6 @@ class img_controller(object):
             old_ = self.load_dict(self.file_path)
             
             old_.pop(self.selected_index)
-            
-            
-            
-            
             
             self.save_dict(old_, self.file_path)
             
@@ -242,6 +268,7 @@ class img_controller(object):
         
         self.obstacle_region_points = []
         self.route_list = []
+        print("Save scenario ")
         
         
     def show_all_obstacle_scenario(self):
@@ -338,6 +365,8 @@ class img_controller(object):
         self.points = []
         self.obstacle_scenario_result = []
         self.list_collect_points = []
+        
+        self.route_list = []
         
         
         
@@ -575,6 +604,7 @@ class img_controller(object):
                 
                 self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
 
+            self.draw_current_obstacle()
             self.__update_img()
         
         
