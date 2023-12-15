@@ -41,6 +41,7 @@ class img_controller(object):
         
 
     def read_file_and_init(self):
+        print(self.img_path)
         self.origin_img = opencv_engine.read_image(self.img_path)
         self.origin_height, self.origin_width, self.origin_channel = self.origin_img.shape
         

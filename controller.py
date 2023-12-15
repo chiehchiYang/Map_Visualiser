@@ -25,7 +25,7 @@ class MainWindow_controller(QMainWindow):
     def setup_control(self):
         
 
-        Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD", ]
+        Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD", "hct"]
         
         for Town_name in Town_list:
             self.ui.town_comboBox.addItem(Town_name)
