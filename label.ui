@@ -378,10 +378,10 @@
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="5" column="0">
+      <item row="6" column="0">
        <widget class="QPushButton" name="pushButton_save_obstacle_scenario">
         <property name="text">
-         <string>3. Save Obstacle Scenario</string>
+         <string>4. Save Obstacle Scenario</string>
         </property>
        </widget>
       </item>
@@ -402,7 +402,7 @@
         </property>
        </widget>
       </item>
-      <item row="10" column="0">
+      <item row="11" column="0">
        <widget class="QPushButton" name="pushButton_remove_obstacle_scenario">
         <property name="text">
          <string>Remove this scenario</string>
@@ -416,31 +416,31 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0">
+      <item row="8" column="0">
        <widget class="QPushButton" name="pushButton_clear_route">
         <property name="text">
          <string>Clear Route</string>
         </property>
        </widget>
       </item>
-      <item row="8" column="0">
+      <item row="9" column="0">
        <widget class="QPushButton" name="pushButton_show_all_obstacle_scenario">
         <property name="text">
          <string>Show All Scenario</string>
         </property>
        </widget>
       </item>
-      <item row="9" column="0">
+      <item row="10" column="0">
        <widget class="QPushButton" name="pushButton_select_scenario">
         <property name="text">
          <string>Select the scenario</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
+      <item row="5" column="0">
        <widget class="QPushButton" name="pushButton_add_route">
         <property name="text">
-         <string>4. Add Route</string>
+         <string>3. Add Route</string>
         </property>
        </widget>
       </item>
