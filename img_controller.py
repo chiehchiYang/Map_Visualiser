@@ -298,7 +298,9 @@ class img_controller(object):
                 detect_point = obstacle_scenario[0]
                 route_list = obstacle_scenario[2]
                 
-                for route_points in route_list:
+                # for route_points in route_list:
+                for index in range(len(route_list)):
+                    route_points = route_list[index]
                     color_counter = 0
                     for position in route_points:
                         color_counter+=3
