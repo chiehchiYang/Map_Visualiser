@@ -34,7 +34,7 @@ class MainWindow_controller(QMainWindow):
         #     - static.prop.trafficwarning
         # - illegal parking
         
-        obstacle_type_list = ["trafficcone01", "constructioncone", "streetbarrier", "trafficwarning", "illegal_parking"]
+        obstacle_type_list = ["trafficcone01", "constructioncone", "streetbarrier", "trafficwarning", "illegal_parking", "door_obstacle"]
 
         for obstacle_type in obstacle_type_list:
             self.ui.obstacle_type_comboBox.addItem(obstacle_type)

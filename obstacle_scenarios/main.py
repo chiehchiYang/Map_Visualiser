@@ -9,16 +9,16 @@ def load_dict( filename_):
 # result = load_dict("Town05.pkl")
 
 
-result = load_dict("Town10HD.pkl")
+result = load_dict("Town03.pkl")
 
 
 print(len(result))
 
 
 
-def save_dict( di_, filename_):
-    with open(filename_, 'wb') as f:
-        pickle.dump(di_, f)
+# def save_dict( di_, filename_):
+#     with open(filename_, 'wb') as f:
+#         pickle.dump(di_, f)
 
 
 # pop_result = result.pop(-1)

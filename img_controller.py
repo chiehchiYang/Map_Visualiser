@@ -133,6 +133,11 @@ class img_controller(object):
             
             contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
             self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+            
+        elif   self.ui.obstacle_type_comboBox.currentText() == "door_obstacle":
+            
+            contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+            self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
 
         self.__update_img()
         
@@ -144,28 +149,37 @@ class img_controller(object):
             pos = self.carla_to_pixel(np.array(data["pos"])) 
             yaw = data["yaw"]
             
-            if self.ui.obstacle_type_comboBox.currentText() == "trafficcone01":
+            obstacle_type = data["obstacle_type"]
+            
+            
+            if obstacle_type == "trafficcone01":
             
                 self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=7) 
             
-            elif   self.ui.obstacle_type_comboBox.currentText() == "constructioncone":
+            elif obstacle_type == "constructioncone":
             
                 self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (125, 125, 0), point_size=4) 
             
-            elif   self.ui.obstacle_type_comboBox.currentText() == "streetbarrier":
+            elif obstacle_type == "streetbarrier":
                 
                 contours = self.draw_rotated_bbox(pos, dx=12, dy=6, yaw=yaw)
                 self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
             
-            elif   self.ui.obstacle_type_comboBox.currentText() == "trafficwarning":
+            elif obstacle_type == "trafficwarning":
                 
                 contours = self.draw_rotated_bbox(pos, dx=25, dy=15, yaw=yaw)
                 self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
     
-            elif   self.ui.obstacle_type_comboBox.currentText() == "illegal_parking":
+            elif  obstacle_type == "illegal_parking":
                 
                 contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
                 self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+                
+            elif  obstacle_type == "door_obstacle":
+            
+                contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+
         
     
     def remove_scenario(self):
@@ -341,8 +355,12 @@ class img_controller(object):
                         self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
                     
 
-        
-                    
+                    elif obstacle_type == "door_obstacle":
+                            
+                        contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                        self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+
+                                    
 
             self.__update_img()
     
