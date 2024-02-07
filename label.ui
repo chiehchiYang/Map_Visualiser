@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1871</width>
-    <height>1055</height>
+    <width>1426</width>
+    <height>846</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>1461</width>
+      <width>1071</width>
       <height>981</height>
      </rect>
     </property>
@@ -60,7 +60,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1457</width>
+          <width>1067</width>
           <height>977</height>
          </rect>
         </property>
@@ -82,105 +82,13 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>1480</x>
-      <y>720</y>
-      <width>331</width>
-      <height>66</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_real_pos">
-       <property name="text">
-        <string>Carla  Coordinate = ( x, y )</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_click_pos">
-       <property name="text">
-        <string>Clicked position = ( x, y )</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_yaw">
-       <property name="text">
-        <string>yaw = </string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>1470</x>
-      <y>560</y>
-      <width>351</width>
-      <height>151</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-    <widget class="QWidget" name="gridLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>331</width>
-       <height>141</height>
-      </rect>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_edit_mode">
-        <property name="text">
-         <string>Edit Mode</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>TAG</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton_show_results">
-        <property name="text">
-         <string>Show Results</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="lineEdit_tag"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="QPushButton" name="pushButton_save_region">
-        <property name="text">
-         <string>Save Region</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
    <widget class="QFrame" name="frame_2">
     <property name="geometry">
      <rect>
-      <x>1470</x>
+      <x>1070</x>
       <y>0</y>
       <width>341</width>
-      <height>141</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -233,7 +141,7 @@
        <x>10</x>
        <y>70</y>
        <width>321</width>
-       <height>61</height>
+       <height>31</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -261,105 +169,13 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QPushButton" name="pushButton_clear">
-    <property name="geometry">
-     <rect>
-      <x>1470</x>
-      <y>460</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Clear</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="formLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>1590</x>
-      <y>460</y>
-      <width>221</width>
-      <height>95</height>
-     </rect>
-    </property>
-    <layout class="QFormLayout" name="formLayout">
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEdit_x"/>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEdit_y"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>X :      </string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QPushButton" name="pushButton_show_point">
-       <property name="text">
-        <string>Show Point</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>Y :      </string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>1480</x>
-      <y>790</y>
-      <width>331</width>
-      <height>181</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton_route_mode">
-       <property name="text">
-        <string>Route Mode</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="pushButton_smooth_route">
-       <property name="text">
-        <string>Smooth Route</string>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0">
-      <widget class="QPushButton" name="pushButton_save_route">
-       <property name="text">
-        <string>Save Route</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <widget class="QPushButton" name="pushButton_modify_point">
-       <property name="text">
-        <string>Modify Point</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QFrame" name="frame_3">
     <property name="geometry">
      <rect>
-      <x>1470</x>
-      <y>130</y>
+      <x>1070</x>
+      <y>110</y>
       <width>341</width>
-      <height>321</height>
+      <height>691</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -374,7 +190,7 @@
        <x>10</x>
        <y>10</y>
        <width>321</width>
-       <height>306</height>
+       <height>576</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
@@ -444,6 +260,88 @@
         </property>
        </widget>
       </item>
+      <item row="13" column="0">
+       <widget class="QPushButton" name="pushButton_update_reference_route">
+        <property name="text">
+         <string>Update Reference Route</string>
+        </property>
+       </widget>
+      </item>
+      <item row="15" column="0">
+       <widget class="QPushButton" name="pushButton_route_mode">
+        <property name="text">
+         <string>Route Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item row="17" column="0">
+       <widget class="QPushButton" name="pushButton_modify_point">
+        <property name="text">
+         <string>Modify Point</string>
+        </property>
+       </widget>
+      </item>
+      <item row="16" column="0">
+       <widget class="QPushButton" name="pushButton_smooth_route">
+        <property name="text">
+         <string>Smooth Route</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0">
+       <widget class="QPushButton" name="pushButton_clear">
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QPushButton" name="pushButton_update_ego_route">
+        <property name="text">
+         <string>Update Ego Route</string>
+        </property>
+       </widget>
+      </item>
+      <item row="18" column="0">
+       <widget class="QPushButton" name="pushButton_save_route">
+        <property name="text">
+         <string>Save Route</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>600</y>
+       <width>331</width>
+       <height>66</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_real_pos">
+        <property name="text">
+         <string>Carla  Coordinate = ( x, y )</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_click_pos">
+        <property name="text">
+         <string>Clicked position = ( x, y )</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_yaw">
+        <property name="text">
+         <string>yaw = </string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
@@ -453,8 +351,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1871</width>
-     <height>22</height>
+     <width>1426</width>
+     <height>24</height>
     </rect>
    </property>
   </widget>

@@ -233,6 +233,16 @@ class img_controller(object):
             
             
             if self.selected_index != -1:
+                
+                
+                
+                self.clear()
+                
+                
+                self.show_selected_obstacle_scenario()
+                
+                
+                
                 #print("=== ")
 
                 # print(result[-1])
@@ -246,7 +256,34 @@ class img_controller(object):
                 self.__update_img()
                     
                 
+    
+    def update_ego_route(self):
+    
+        if len(self.list_collect_points) != 0  and self.selected_index != -1:
+            
+            self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+            if os.path.exists(self.file_path):
+                old_ = self.load_dict(self.file_path)
+                old_[self.selected_index][2].insert(0, self.list_collect_points)  
                 
+                self.save_dict(old_, self.file_path)
+                
+                self.clear()
+                self.show_all_obstacle_scenario()
+                
+                print( self.ui.town_comboBox.currentText(), " selected index: ", self.selected_index)
+                
+                
+                      
+    def update_reference_route(self):
+    
+        if len(self.list_collect_points) != 0 :     
+            
+            # self.list_collect_points 
+            pass 
+            # read pkl 
+            
+            # save pkl   
                 
             
     def add_route(self):
@@ -285,6 +322,123 @@ class img_controller(object):
         print("Save scenario ")
         
         
+    def show_selected_obstacle_scenario(self):
+        self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
+        if os.path.exists(self.file_path):
+            result = self.load_dict(self.file_path)
+            # clean the image 
+            self.clear()
+            
+            # draw on image
+            # for obstacle_scenario in result:
+            
+            
+            obstacle_scenario = result[self.selected_index]
+                
+            detect_point = obstacle_scenario[0]
+            route_list = obstacle_scenario[2]
+            color_counter = 0
+            
+            
+            # draw first route ( Ego Route )
+            route_points = route_list[0]
+            position = route_points[0]
+            pos = self.carla_to_pixel(np.array(position))
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0), point_size = 8) 
+            for pos_index in range(1, len(route_points)):
+                position = route_points[pos_index]
+                pos = self.carla_to_pixel(np.array(position))
+                
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0)) 
+            # draw second route 
+            route_points = route_list[1]
+            position = route_points[0]
+            pos = self.carla_to_pixel(np.array(position))
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
+            for pos_index in range(1, len(route_points)):
+                position = route_points[pos_index]
+                pos = self.carla_to_pixel(np.array(position))
+                
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
+                
+            # for route_points in route_list:
+            for index in range(2, len(route_list)):
+                route_points = route_list[index]
+                
+                # for position in route_points:
+                color_counter+=10
+                # start point  
+                
+                position = route_points[0]
+                pos = self.carla_to_pixel(np.array(position))
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
+
+                
+                
+                for pos_index in range(1, len(route_points)):
+                    
+                    position = route_points[pos_index]
+                        
+                    
+                    
+                    pos = self.carla_to_pixel(np.array(position))
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+
+            obstacle_scenario = obstacle_scenario[1]
+            
+            random_color = tuple(np.random.random(size=3) * 256)
+            
+            # draw detect point 
+            pos = self.carla_to_pixel(np.array(detect_point))     
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color =  random_color, point_size=2) 
+                    
+            for obstacle_info in obstacle_scenario: 
+                
+                obstacle_type = obstacle_info['obstacle_type']
+                pos = obstacle_info['pos']
+                yaw = obstacle_info['yaw']
+    
+                pos = self.carla_to_pixel(np.array(pos))     
+                
+                if obstacle_type == "trafficcone01":
+                
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=7) 
+                
+                elif obstacle_type == "constructioncone":
+                
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = random_color, point_size=4) 
+                
+                elif obstacle_type == "streetbarrier":
+                    
+                    contours = self.draw_rotated_bbox(pos, dx=12, dy=6, yaw=yaw)
+                    self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                
+                elif obstacle_type == "trafficwarning":
+                    
+                    contours = self.draw_rotated_bbox(pos, dx=25, dy=15, yaw=yaw)
+                    self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                    
+                    
+                elif obstacle_type == "illegal_parking":
+                    
+                    contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                    self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = random_color)
+                
+
+                elif obstacle_type == "door_obstacle":
+                        
+                    contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
+                    self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
+
+             
+                  
+
+            self.__update_img()        
+        
+        
+        
+        
     def show_all_obstacle_scenario(self):
         self.file_path = f'./obstacle_scenarios/{self.ui.town_comboBox.currentText()}.pkl'
         if os.path.exists(self.file_path):
@@ -295,19 +449,64 @@ class img_controller(object):
             # draw on image
             for obstacle_scenario in result:
                 
+                
+           
+                
                 detect_point = obstacle_scenario[0]
                 route_list = obstacle_scenario[2]
+                color_counter = 0
                 
-                # for route_points in route_list:
-                for index in range(len(route_list)):
-                    route_points = route_list[index]
-                    color_counter = 0
-                    for position in route_points:
-                        color_counter+=3
+                
+                # draw first route ( Ego Route )
+                route_points = route_list[0]
+                position = route_points[0]
+                pos = self.carla_to_pixel(np.array(position))
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0), point_size = 8) 
+                for pos_index in range(1, len(route_points)):
+                    position = route_points[pos_index]
+                    pos = self.carla_to_pixel(np.array(position))
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0)) 
+                # # draw second route 
+                
+                route_points = route_list[1]
+                position = route_points[0]
+                pos = self.carla_to_pixel(np.array(position))
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
+                for pos_index in range(1, len(route_points)):
+                    position = route_points[pos_index]
+                    pos = self.carla_to_pixel(np.array(position))
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
+                
+                
+                
+                # # for route_points in route_list:
+                # for index in range(2, len(route_list)):
+                #     route_points = route_list[index]
+                    
+                #     # for position in route_points:
+                    
+                #     color_counter+=10
                         
-                        pos = self.carla_to_pixel(np.array(position))
+                    
+                #     # start point  
+                    
+                #     position = route_points[0]
+                #     pos = self.carla_to_pixel(np.array(position))
+                #     self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
+
+                    
+                    
+                #     for pos_index in range(1, len(route_points)):
                         
-                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+                #         position = route_points[pos_index]
+                            
+                        
+                        
+                #         pos = self.carla_to_pixel(np.array(position))
+                        
+                #         self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
 
                 self.__update_img()
                 
@@ -362,7 +561,8 @@ class img_controller(object):
                         contours = self.draw_rotated_bbox(pos, dx=49, dy=20, yaw=yaw)
                         self.display_img = opencv_engine.draw_fillpoly(self.display_img, contours, color = (125, 125, 0))
 
-                                    
+             
+            print(len(result), f" scenario in {self.ui.town_comboBox.currentText()}")                       
 
             self.__update_img()
     

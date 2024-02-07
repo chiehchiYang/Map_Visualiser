@@ -58,22 +58,19 @@ class MainWindow_controller(QMainWindow):
         
            
         self.ui.town_comboBox.currentIndexChanged.connect(self.init_new_picture)
-        
         self.ui.pushButton_clear.clicked.connect(self.img_controller.clear)
         
-        self.ui.pushButton_save_region.clicked.connect(self.img_controller.save_flag)
-
-
-        self.ui.pushButton_show_results.clicked.connect(self.img_controller.show_results)
+        # self.ui.pushButton_save_region.clicked.connect(self.img_controller.save_flag)
+        # self.ui.pushButton_show_results.clicked.connect(self.img_controller.show_results)
+        # self.ui.pushButton_show_point.clicked.connect(self.img_controller.show_point)
+        # self.ui.pushButton_route_mode.clicked.connect(self.change_to_route_mode)
+        # self.ui.pushButton_save_route.clicked.connect(self.img_controller.save_route_points)
         
-        self.ui.pushButton_show_point.clicked.connect(self.img_controller.show_point)
+        self.ui.pushButton_update_ego_route.clicked.connect(self.img_controller.update_ego_route)
+        # update_ego_route 
         
         
-        self.ui.pushButton_route_mode.clicked.connect(self.change_to_route_mode)
         self.ui.pushButton_smooth_route.clicked.connect(self.img_controller.smooth_route)
-
-        self.ui.pushButton_save_route.clicked.connect(self.img_controller.save_route_points)
-        
         self.ui.pushButton_create_scenario_mode.clicked.connect(self.change_to_create_obstacle_scenario_mode)
         self.ui.pushButton_add_obstacle.clicked.connect(self.img_controller.add_obstacle)
         self.ui.pushButton_add_detect_point.clicked.connect(self.img_controller.add_detect_point)
