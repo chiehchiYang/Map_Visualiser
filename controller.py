@@ -40,15 +40,20 @@ class MainWindow_controller(QMainWindow):
             self.ui.obstacle_type_comboBox.addItem(obstacle_type)
         
 
-        Town_list = ["Town01", "Town02", "Town03", "Town04", "Town05", "Town05_highway", "Town06", "Town07", "Town10HD" ]
+        
+        Town_list = ["Town01", "Town01_train", "Town02", "Town02_train", "Town03", "Town03_train", 
+                     "Town05", "Town05_train", "Town07", "Town07_train", "Town10HD", "Town10HD_train" ]
         
         for Town_name in Town_list:
             self.ui.town_comboBox.addItem(Town_name)
             
+        town = self.get_town_name(self.ui.town_comboBox.currentText())
+        self.file_path = f'./Maps/{town}.png'
 
-        self.file_path = f'./Maps/{self.ui.town_comboBox.currentText()}.png'
+
+        # self.file_path = f'./Maps/{self.ui.town_comboBox.currentText()}.png'
         self.img_controller = img_controller(img_path=self.file_path,
-                                             ui=self.ui, Town=self.ui.town_comboBox.currentText())
+                                             ui=self.ui, Town=town)
 
         self.ui.btn_zoom_in.clicked.connect(self.img_controller.set_zoom_in)
         self.ui.btn_zoom_out.clicked.connect(self.img_controller.set_zoom_out)
@@ -66,9 +71,8 @@ class MainWindow_controller(QMainWindow):
         # self.ui.pushButton_route_mode.clicked.connect(self.change_to_route_mode)
         # self.ui.pushButton_save_route.clicked.connect(self.img_controller.save_route_points)
         
-        self.ui.pushButton_update_ego_route.clicked.connect(self.img_controller.update_ego_route)
-        # update_ego_route 
-        
+        self.ui.pushButton_update_ego_route.clicked.connect(self.img_controller.update_ego_route)        
+        self.ui.pushButton_update_reference_route.clicked.connect(self.img_controller.update_reference_route)
         
         self.ui.pushButton_smooth_route.clicked.connect(self.img_controller.smooth_route)
         self.ui.pushButton_create_scenario_mode.clicked.connect(self.change_to_create_obstacle_scenario_mode)
@@ -84,13 +88,22 @@ class MainWindow_controller(QMainWindow):
         self.ui.pushButton_add_route.clicked.connect(self.img_controller.add_route)
         # add_route
         
+    
+    def get_town_name(self, name):
+        if "Town01" in name:
+            return "Town01"
+        elif "Town02" in name:
+            return "Town02"
+        elif "Town03" in name:
+            return "Town03"
+        elif "Town05" in name:
+            return "Town05"
+        elif "Town07" in name:
+            return "Town07"
+        elif "Town10HD" in name:
+            return "Town10HD"
         
         
-         
-        
-        # save_obstacle_scenario
-        
-
     def change_to_route_mode(self):
         self.img_controller.route_mode = not self.img_controller.route_mode
         if self.img_controller.route_mode:
@@ -107,16 +120,14 @@ class MainWindow_controller(QMainWindow):
                 self.ui.pushButton_create_scenario_mode.setStyleSheet("color: red;")
             else:
                 self.ui.pushButton_create_scenario_mode.setStyleSheet("color: white;")
-                
-
-
-
-        
 
     def init_new_picture(self):
         self.ui.slider_zoom.setProperty("value", 20)
-        self.file_path = f'./Maps/{self.ui.town_comboBox.currentText()}.png'
-        self.img_controller.set_path(self.file_path, self.ui.town_comboBox.currentText())   
+        
+        
+        town = self.get_town_name(self.ui.town_comboBox.currentText())
+        self.file_path = f'./Maps/{town}.png'
+        self.img_controller.set_path(self.file_path, town)   
         self.getslidervalue()     
 
 
