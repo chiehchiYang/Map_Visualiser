@@ -359,45 +359,45 @@ class img_controller(object):
                 
                 self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0)) 
                 
-            try:  
-                # draw second route 
-                route_points = route_list[1]
-                position = route_points[0]
+            # try:  
+            # draw second route 
+            route_points = route_list[1]
+            position = route_points[0]
+            pos = self.carla_to_pixel(np.array(position))
+            self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
+            for pos_index in range(1, len(route_points)):
+                position = route_points[pos_index]
                 pos = self.carla_to_pixel(np.array(position))
-                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
-                for pos_index in range(1, len(route_points)):
-                    position = route_points[pos_index]
-                    pos = self.carla_to_pixel(np.array(position))
-                    
-                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
-            except:
-                pass   
+                
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
+            # except:
+            #     pass   
                 
             # for route_points in route_list:
             
             
-            # for index in range(2, len(route_list)):
-            #     route_points = route_list[index]
+            for index in range(2, len(route_list)):
+                route_points = route_list[index]
                 
-            #     # for position in route_points:
-            #     color_counter+=10
-            #     # start point  
+                # for position in route_points:
+                color_counter+=10
+                # start point  
                 
-            #     position = route_points[0]
-            #     pos = self.carla_to_pixel(np.array(position))
-            #     self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
+                position = route_points[0]
+                pos = self.carla_to_pixel(np.array(position))
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
 
                 
                 
-            #     for pos_index in range(1, len(route_points)):
+                for pos_index in range(1, len(route_points)):
                     
-            #         position = route_points[pos_index]
+                    position = route_points[pos_index]
                         
                     
                     
-            #         pos = self.carla_to_pixel(np.array(position))
+                    pos = self.carla_to_pixel(np.array(position))
                     
-            #         self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
 
             obstacle_scenario = obstacle_scenario[1]
             
@@ -483,46 +483,46 @@ class img_controller(object):
                     self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (255, 0, 0)) 
                 # # draw second route 
                 
-                try:
-                    route_points = route_list[1]
+                # try:
+                route_points = route_list[1]
+                position = route_points[0]
+                pos = self.carla_to_pixel(np.array(position))
+                self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
+                for pos_index in range(1, len(route_points)):
+                    position = route_points[pos_index]
+                    pos = self.carla_to_pixel(np.array(position))
+                    
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
+                # except:
+                #     pass
+                
+                
+                # for route_points in route_list:
+                for index in range(2, len(route_list)):
+                    route_points = route_list[index]
+                    
+                    # for position in route_points:
+                    
+                    color_counter+=10
+                        
+                    
+                    # start point  
+                    
                     position = route_points[0]
                     pos = self.carla_to_pixel(np.array(position))
-                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255), point_size = 4) 
-                    for pos_index in range(1, len(route_points)):
-                        position = route_points[pos_index]
-                        pos = self.carla_to_pixel(np.array(position))
-                        
-                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 0, 255)) 
-                except:
-                    pass
-                
-                
-                # # for route_points in route_list:
-                # for index in range(2, len(route_list)):
-                #     route_points = route_list[index]
-                    
-                #     # for position in route_points:
-                    
-                #     color_counter+=10
-                        
-                    
-                #     # start point  
-                    
-                #     position = route_points[0]
-                #     pos = self.carla_to_pixel(np.array(position))
-                #     self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
+                    self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255), point_size = 4) 
 
                     
                     
-                #     for pos_index in range(1, len(route_points)):
+                    for pos_index in range(1, len(route_points)):
                         
-                #         position = route_points[pos_index]
+                        position = route_points[pos_index]
                             
                         
                         
-                #         pos = self.carla_to_pixel(np.array(position))
+                        pos = self.carla_to_pixel(np.array(position))
                         
-                #         self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
+                        self.display_img = opencv_engine.draw_point(self.display_img, (pos[0], pos[1]), color = (0, 255 - color_counter%255, color_counter%255)) 
 
                 self.__update_img()
                 
